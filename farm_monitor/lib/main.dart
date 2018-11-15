@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
 }
 
 class ConnectionStatusState extends State<ConnectionStatus>{
+  static const platform = const MethodChannel('home.farmmonitor/appwidget');
   String _connectionStatus = 'Unknown';
   final Connectivity _connectivity = Connectivity();
   StreamSubscription<ConnectivityResult> _connectivitySubscription;
@@ -36,14 +37,14 @@ class ConnectionStatusState extends State<ConnectionStatus>{
     initConnectivity();
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen((ConnectivityResult result) async {
+          String connectionStatus = result.toString();
           if(result == ConnectivityResult.wifi){
             final wifiname = await _connectivity.getWifiName();
-            setState(() => _connectionStatus = result.toString() + ": " + wifiname);
-          }
-          else{
-            setState(() => _connectionStatus = result.toString());
+            connectionStatus += ": " + wifiname;
           }
 
+          setState(() => _connectionStatus = connectionStatus);
+          await platform.invokeMethod("justCall", {"connectionStatus": connectionStatus});
         });
   }
 

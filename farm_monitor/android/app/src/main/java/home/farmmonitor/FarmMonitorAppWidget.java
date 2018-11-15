@@ -18,6 +18,27 @@ public class FarmMonitorAppWidget extends AppWidgetProvider {
         }
     }
 
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        AppWidgetManager mgr = AppWidgetManager.getInstance(context);
+        if(intent.getAction().equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)){
+            int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
+                    AppWidgetManager.INVALID_APPWIDGET_ID);
+
+            String status = intent.getStringExtra("connectionStatus");
+            RemoteViews views = new RemoteViews(context.getPackageName(),
+                    R.layout.farm_monitor_app_widget);
+            views.setTextViewText(R.id.tvWidget, status);
+            // Instruct the widget manager to update the widget
+            mgr.updateAppWidget(appWidgetId, views);
+        }
+
+
+
+        super.onReceive(context, intent);
+
+    }
+
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                  int appWidgetId) {
 
@@ -32,7 +53,6 @@ public class FarmMonitorAppWidget extends AppWidgetProvider {
 
         // Here the basic operations the remote view can do.
         views.setOnClickPendingIntent(R.id.tvWidget, pendingIntent);
-
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
