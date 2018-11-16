@@ -7,22 +7,26 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.util.Log;
-import android.widget.Toast;
 
 public class FarmMonitorBroadcastReceiver extends BroadcastReceiver {
 
+    private FarmMonitorService service;
+
+    public FarmMonitorBroadcastReceiver(FarmMonitorService service){
+
+        this.service = service;
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        String wifiSSID = getWifiSSID(context);
-        if (wifiSSID != null) {
-            Toast.makeText(context, "Wifi connected:" + wifiSSID, Toast.LENGTH_SHORT).show();
+        if (isWifiConnected(context)) {
+            service.wifiConnected();
         } else {
-            Toast.makeText(context, "Wifi NOT connected", Toast.LENGTH_SHORT).show();
+            service.wifiDisconnected();
         }
     }
 
-    private String getWifiSSID(Context context) {
+    private boolean isWifiConnected(Context context) {
         final ConnectivityManager connManager = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         final WifiManager wifiManager = (WifiManager)
@@ -36,9 +40,9 @@ public class FarmMonitorBroadcastReceiver extends BroadcastReceiver {
                 networkInfo.getType() == ConnectivityManager.TYPE_WIFI &&
                 networkInfo.isConnected() &&
                 wifiInfo != null) {
-            return wifiInfo.getSSID();
+            return true;
         }
 
-        return null;
+        return false;
     }
 }
