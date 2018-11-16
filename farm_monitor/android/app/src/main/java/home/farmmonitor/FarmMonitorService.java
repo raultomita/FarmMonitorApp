@@ -48,10 +48,13 @@ public class FarmMonitorService extends JobService {
 
     public void wifiConnected() {
         sendNotification(android.R.color.holo_green_dark, "Online", "Wifi is connected");
+        //RedisClient redisClient = RedisClient.create("redis://password@localhost:6379/0");
+        //StatefulRedisConnection<String, String> connection = redisClient.connect();
     }
 
     private void sendNotification(int color, String title, String content){
         notificationBuilder.setSmallIcon(color)
+                .setColor(color)
                 .setContentTitle(title)
                 .setContentText(content);
 
@@ -81,6 +84,7 @@ public class FarmMonitorService extends JobService {
 
         notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setOnlyAlertOnce(true)
-                .setContentIntent(pendingIntent);
+                .setContentIntent(pendingIntent)
+                .setOngoing(true);
     }
 }

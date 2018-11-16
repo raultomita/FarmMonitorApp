@@ -19,11 +19,15 @@ public class FarmMonitorBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (isWifiConnected(context)) {
-            service.wifiConnected();
-        } else {
-            service.wifiDisconnected();
+        if(intent.getAction() == ConnectivityManager.CONNECTIVITY_ACTION)
+        {
+            if (isWifiConnected(context)) {
+                service.wifiConnected();
+            } else {
+                service.wifiDisconnected();
+            }
         }
+
     }
 
     private boolean isWifiConnected(Context context) {
