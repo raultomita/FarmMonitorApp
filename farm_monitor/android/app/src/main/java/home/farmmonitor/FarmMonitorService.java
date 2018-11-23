@@ -15,10 +15,18 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.WebSocket;
+
 public class FarmMonitorService extends JobService {
     private final String CHANNEL_ID = "notifications.home.farmMonitor";
     private final int NOTIFICATION_ID = 1;
-
+    OkHttpClient client;
     private FarmMonitorBroadcastReceiver receiver;
     private NotificationCompat.Builder notificationBuilder;
 
@@ -27,11 +35,13 @@ public class FarmMonitorService extends JobService {
         createNotificationChannel();
         createNotificationBuilder();
         sendNotification(android.R.color.darker_gray, "Service started", "Initialization in progress");
-
+        client = new OkHttpClient();
         receiver = new FarmMonitorBroadcastReceiver(this);
         registerReceiver(receiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+
         return true;
     }
+
 
     @Override
     public boolean onStopJob(JobParameters params) {
@@ -47,12 +57,17 @@ public class FarmMonitorService extends JobService {
     }
 
     public void wifiConnected() {
-        sendNotification(android.R.color.holo_green_dark, "Online", "Wifi is connected");
+        Request request = new Request.Builder().url("ws://rtomita.intern.essensys.ro:5000/ws").build();
+        Client listener = new Client(this);
+        WebSocket ws = client.newWebSocket(request, listener);
+        client.dispatcher().executorService().shutdown();
+
+        //sendNotification(android.R.color.holo_green_dark, "Online", "Wifi is connected");
         //RedisClient redisClient = RedisClient.create("redis://password@localhost:6379/0");
         //StatefulRedisConnection<String, String> connection = redisClient.connect();
     }
 
-    private void sendNotification(int color, String title, String content){
+    public void sendNotification(int color, String title, String content){
         notificationBuilder.setSmallIcon(color)
                 .setColor(color)
                 .setContentTitle(title)
