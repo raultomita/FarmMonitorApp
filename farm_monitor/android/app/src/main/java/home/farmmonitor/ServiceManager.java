@@ -16,9 +16,10 @@ public class ServiceManager {
         if (jobInfo != null) {
             Toast.makeText(context, "job found", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(context, "job NOT found JOB_IDnd it will be created", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "job NOT found and it will be created", Toast.LENGTH_SHORT).show();
             JobInfo.Builder builder = new JobInfo.Builder(JOB_ID, new ComponentName(context, FarmMonitorService.class));
-            builder.setOverrideDeadline(0);
+            builder.set
+            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED);
             scheduler.schedule(builder.build());
         }
     }

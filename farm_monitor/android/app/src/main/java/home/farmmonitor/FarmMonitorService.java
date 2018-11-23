@@ -45,11 +45,11 @@ public class FarmMonitorService extends JobService {
 
     @Override
     public boolean onStopJob(JobParameters params) {
-        Toast.makeText(this, "Farm monitor job stopped", Toast.LENGTH_SHORT).show();
+        sendNotification(android.R.color.darker_gray, "Service stopped", "Nothing to say");
         if (receiver != null) {
             unregisterReceiver(receiver);
         }
-        return false;
+        return true;
     }
 
     public void wifiDisconnected() {
@@ -100,6 +100,7 @@ public class FarmMonitorService extends JobService {
         notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setOnlyAlertOnce(true)
                 .setContentIntent(pendingIntent)
-                .setOngoing(true);
+                //.setOngoing(true)
+        ;
     }
 }
