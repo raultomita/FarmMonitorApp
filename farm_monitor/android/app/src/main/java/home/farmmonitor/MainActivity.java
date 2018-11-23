@@ -48,6 +48,7 @@ public class MainActivity extends FlutterActivity {
     @Override
     protected void onStart() {
         ServiceManager.schedule(this);
+
         super.onStart();
     }
 }
